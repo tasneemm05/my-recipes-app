@@ -1,10 +1,9 @@
 const CACHE_NAME = "my-recipes-cache-v1";
 const FILES_TO_CACHE = [
-  "/index.html",
-  "/style.css",
-  "/script.js",
-  "/images/icon.png",
-  "/images/icon-512.png"
+  "./",
+  "./index.html",
+  "./style.css",
+  "./script.js"
 ];
 
 // Install service worker and cache files

@@ -1,3 +1,6 @@
+import { db } from "./firebase.js";
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 // -------------------- DATA --------------------
 const recipes = [
   { id:1,name:"Chocolate Cookies",category:"Desserts",time: 20,difficulty:"easy",img:"images/cookies.png",servings:4,ingredients:[{name:"eggs",amount:2},{name:"butter(g)",amount:100},{name:"flour(g)",amount:200}],steps:["Preheat oven","Mix ingredients","Shape cookies","Bake 20 minutes"] },
@@ -11,69 +14,77 @@ const recipes = [
   { id:9,name:"Greek Salad",category:"salads",time: 15,difficulty:"easy", servings: 2, img: "images/Greek-Salad.png", ingredients: [{amount:2,name:"cups lettuce"},{amount:1,name:"tomato"},{amount:0.5,name:"cucumber"},{amount:50,name:"g feta cheese"},{amount:5,name:"olives"},{amount:1,name:"tbsp olive oil"},{amount:0.5,name:"tbsp lemon juice"}], steps:["Chop lettuce, tomato, and cucumber.","Mix in a bowl with olives and feta.","Drizzle olive oil and lemon juice.","Toss and serve immediately."] },
   { id:10,name:"Orange Juice",category:"juices",time: 10,difficulty:"easy", servings: 2, img: "images/Orange-Juice.png", ingredients: [{amount:4,name:"oranges"},{amount:1,name:"tbsp sugar (optional)"}], steps:["Peel and segment oranges.","Juice them using a juicer or blender.","Add sugar if desired and stir.","Serve chilled."] }
 ];
-
 // -------------------- STORAGE --------------------
 let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-const ratings = JSON.parse(localStorage.getItem("ratings")) || {};
+
+// -------------------- GET AVERAGE RATING --------------------
+async function getAverageRating(recipeId){
+  const snapshot = await getDocs(collection(db, "ratings"));
+
+  let total = 0, count = 0;
+
+  snapshot.forEach(doc=>{
+    const d = doc.data();
+    if(d.recipeId === recipeId){
+      total += d.value;
+      count++;
+    }
+  });
+
+  return count ? (total/count).toFixed(1) : 0;
+}
 
 // -------------------- DISPLAY RECIPES --------------------
-function displayRecipes(list){
+async function displayRecipes(list){
   const container = document.getElementById("recipes-container");
   container.innerHTML = "";
 
-  list.forEach(recipe=>{
+  for(const recipe of list){
+
+    const avg = await getAverageRating(recipe.id);
+    const rating = avg > 0 ? "⭐ " + avg + "/5" : "No rating";
+
     const card = document.createElement("div");
     card.className = "recipe-card";
 
-    const isFav = favorites.includes(recipe.id);
-    const heart = isFav ? "❤️" : "🤍";
-
-    const avgRating = ratings[recipe.id] ? parseFloat(ratings[recipe.id]) : 0;
-    const ratingStars = avgRating ? "⭐ "+avgRating+"/5" : "No rating";
-
     card.innerHTML = `
-      <img src="${recipe.img}">
       <h3>${recipe.name}</h3>
-      <p>⏱${recipe.time} min</p>
-      <p class="difficulty ${recipe.difficulty}">${recipe.difficulty}</p>
-      <p class="avg-rating">${ratingStars}</p>
-      <button onclick="toggleFavorite(${recipe.id}, event)">${heart}</button>
+      <p>${rating}</p>
     `;
 
-    // click anywhere except button
-    card.addEventListener("click", e=>{
-      if(e.target.tagName!=="BUTTON") openRecipe(recipe.id);
-    });
-
     container.appendChild(card);
-  });
-  updateFavorites();
+  }
 }
 
 // -------------------- FAVORITES --------------------
 function toggleFavorite(id, e){
   e.stopPropagation();
-  if(favorites.includes(id)) favorites = favorites.filter(f=>f!==id);
-  else favorites.push(id);
+
+  if(favorites.includes(id))
+    favorites = favorites.filter(f=>f!==id);
+  else
+    favorites.push(id);
+
   localStorage.setItem("favorites", JSON.stringify(favorites));
   displayRecipes(recipes);
 }
 
 function updateFavorites(){
   const list = document.getElementById("favorites-list");
-  if(!list) return;
   list.innerHTML="";
+
   favorites.forEach(id=>{
     const r = recipes.find(r=>r.id===id);
+
     const li = document.createElement("li");
     li.textContent = r.name;
-    li.style.cursor = "pointer";
     li.onclick = ()=>openRecipe(id);
+
     list.appendChild(li);
   });
 }
 
-// -------------------- OPEN RECIPE --------------------
+// -------------------- NAVIGATION --------------------
 function openRecipe(id){
   const recipe = recipes.find(r=>r.id===id);
   localStorage.setItem("currentRecipe", JSON.stringify(recipe));
@@ -83,21 +94,20 @@ function openRecipe(id){
 // -------------------- SEARCH --------------------
 document.getElementById("search").addEventListener("input", e=>{
   const q = e.target.value.toLowerCase();
-  const filtered = recipes.filter(r=>r.name.toLowerCase().includes(q));
-  displayRecipes(filtered);
+  displayRecipes(recipes.filter(r=>r.name.toLowerCase().includes(q)));
 });
 
-// -------------------- RANDOM --------------------
-function randomRecipe(){
-  const random = recipes[Math.floor(Math.random()*recipes.length)];
-  localStorage.setItem("currentRecipe", JSON.stringify(random));
-  window.location = "recipe.html";
-}
-
-// -------------------- FILTER CATEGORIES --------------------
+// -------------------- FILTER --------------------
 function filterRecipes(category){
   if(category==="All") displayRecipes(recipes);
   else displayRecipes(recipes.filter(r=>r.category===category));
+}
+
+// -------------------- RANDOM --------------------
+function randomRecipe(){
+  const r = recipes[Math.floor(Math.random()*recipes.length)];
+  localStorage.setItem("currentRecipe", JSON.stringify(r));
+  window.location = "recipe.html";
 }
 
 // -------------------- INIT --------------------
