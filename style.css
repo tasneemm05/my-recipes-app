@@ -1,0 +1,271 @@
+/* ---------- GLOBAL ---------- */
+body {
+  font-family: Arial, sans-serif;
+  background: #fff0fc;
+  padding: 20px;
+  color: #333;
+  transition: background 0.3s, color 0.3s;
+  animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- HEADER ---------- */
+header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#search {
+  padding: 10px 15px;
+  width: 350px;
+  border-radius: 25px;
+  border: 1px solid #ddd;
+  outline: none;
+  transition: 0.2s;
+}
+
+#search:focus {
+  border-color: hsl(312, 61%, 63%);
+  box-shadow: 0 0 6px rgba(200,0,150,0.2);
+}
+
+header h1 {
+  display: block;
+  width: 100%;
+  text-align: center; /* optional, centers the title */
+  margin-bottom: 15px; /* space below the title */
+}
+
+header input,
+header button {
+  margin-top: 3px;
+}
+
+/* ---------- BUTTONS ---------- */
+button {
+  padding: 8px 14px;
+  margin: 5px;
+  border: none;
+  background: linear-gradient(45deg, hsl(312, 61%, 63%), hsl(312, 80%, 70%));
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.3s, color 0.3s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+}
+
+/* ---------- RECIPE CARDS ---------- */
+.recipe-card {
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 12px;
+  margin: 12px;
+  display: inline-block;
+  width: 220px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.25s, box-shadow 0.25s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.recipe-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.recipe-card img {
+  width: 100%;
+  border-radius: 10px;
+  transition: transform 0.3s;
+}
+
+.recipe-card:hover img {
+  transform: scale(1.05);
+}
+
+/* ---------- DIFFICULTY BADGES ---------- */
+.difficulty {
+  color: white;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  display: inline-block;
+  margin: 4px 0;
+}
+
+.easy { background: green; }
+.medium { background: orange; }
+.hard { background: red; }
+
+/* ---------- AVERAGE RATING ---------- */
+.avg-rating {
+  font-weight: bold;
+  margin: 5px 0;
+}
+
+/* ---------- RECIPE DETAIL ---------- */
+#recipe-detail {
+  max-width: 600px;
+  margin: 20px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: background 0.3s, color 0.3s;
+}
+
+#recipe-detail img {
+  width: 100%;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+#recipe-detail h1 {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+#recipe-detail ul, #recipe-detail ol {
+  padding-left: 20px;
+}
+
+#recipe-detail li {
+  margin: 6px 0;
+}
+
+
+/* ---------- SERVINGS ---------- */
+.servings-control {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+/* ---------- TIMER ---------- */
+#timer-display {
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: 10px;
+  text-align: center;
+  color: #FF4500;
+}
+
+/* ---------- COMMENTS ---------- */
+/* Modern comment bubbles */
+.comment-bubble {
+  display: inline-block;
+  max-width: 80%;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  background: #f8f0ff;
+  border-radius: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  position: relative;
+  transition: background 0.3s, transform 0.3s;
+  word-wrap: break-word;
+}
+
+/* Bubble tail */
+.comment-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  width: 0;
+  height: 0;
+  border: 10px solid transparent;
+  border-top-color: #f8f0ff;
+  border-bottom: 0;
+  border-left: 0;
+  margin-left: -5px;
+  margin-bottom: -10px;
+}
+
+/* Slide-in animation for new comments */
+@keyframes slideInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Highlight effect for new comment */
+.new-comment {
+  background: #ffe3e3 !important;
+  animation: slideInUp 0.5s ease forwards;
+}
+
+/* Modern comment input */
+#comment-input {
+  width: 95%;           /* wider box */
+  max-width: 600px;     /* optional max width */
+  padding: 12px 16px;   /* more padding for comfort */
+  border-radius: 25px;  /* more rounded corners */
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  font-size: 16px;
+  resize: vertical;     /* allows vertical resizing only */
+  transition: box-shadow 0.3s, border-color 0.3s;
+}
+
+/* Focus effect */
+#comment-input:focus {
+  outline: none;
+  border-color: #a77fff;
+  box-shadow: 0 2px 10px rgba(167,127,255,0.4);
+}
+
+/* Delete button inside comment bubble */
+.comment-bubble button {
+  position: absolute;
+  top: -3px; 
+  left: -5px;
+  background: transparent;
+  border: none;
+  color: #ff4d4d;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-5px);
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.comment-bubble:hover button {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Add padding to comment text so it doesn't overlap button */
+.comment-bubble span {
+  display: inline-block;
+  padding-left: 28px;      /* enough space for delete button */
+}
+
+/* ---------- MEDIA ---------- */
+@media (max-width: 600px){
+  .recipe-card { width: 100%; }
+  #search { width: 100%; }
+  header { flex-direction: column; align-items: center; }
+}
+
